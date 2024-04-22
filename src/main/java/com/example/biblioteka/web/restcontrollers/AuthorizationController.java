@@ -17,37 +17,37 @@ import java.util.Optional;
 public class AuthorizationController {
 
     private final AuthorizationService authorizationService;
-    private final UserService userService;
-    private final PasswordHasher passwordHasher;
+    PasswordHasher passwordHasher;
 
     public AuthorizationController(AuthorizationService authorizationService, UserService userService, PasswordHasher passwordHasher) {
         this.authorizationService = authorizationService;
-        this.userService = userService;
-        this.passwordHasher = passwordHasher;
+        this.passwordHasher= passwordHasher;
     }
 
     @PostMapping("/login")
     public ResponseEntity<User> login(@RequestBody LoginDto loginDto) {
-        Optional<User> user = authorizationService.checkUser(loginDto.getUsername(), loginDto.getPassword());
+        String username = loginDto.getUsername();
+        String inputPass = loginDto.getPassword();
+        Optional<User> user = authorizationService.checkUser(username, inputPass);
         return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
     }
     @PostMapping("/signup")
-    public ResponseEntity<User> signup(@RequestBody SignupDto signupDto) {
+    public ResponseEntity<Void> signup(@RequestBody SignupDto signupDto) {
         if (authorizationService.isUserExist(signupDto.getUsername())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
 
-        // Хешування пароля перед збереженням у базу даних
-        String hashedPassword = passwordHasher.getHashedPassword(signupDto.getPassword());
+        if (signupDto.getUsername() == null || signupDto.getPassword() == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
 
-        User newUser = new User();
-        newUser.setName(signupDto.getUsername());
-        newUser.setPassword(hashedPassword);
-        User savedUser = userService.saveUser(newUser);
-
-        // Приховуємо пароль перед поверненням клієнту
-        savedUser.setPassword(null);
-        return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
+        try {
+            authorizationService.registerNewUser(signupDto);
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        } catch (Exception e) {
+            // Логування або інша обробка помилок
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }
 

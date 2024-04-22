@@ -19,6 +19,9 @@ public class Author {
     @Column(nullable = false, length = 255)
     private String name;
 
+    @Column(nullable = true, length = 255)
+    private String description;
+
     @Column(nullable = false, length = 255)
     private String surname;
 
