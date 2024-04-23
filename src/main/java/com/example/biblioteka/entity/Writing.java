@@ -3,6 +3,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "writings")
@@ -33,5 +34,11 @@ public class Writing {
     @Column(name = "local_address_storing", length = 255)
     private String localAddressStoring;
 
-    // Assume there are relations with other entities which would be added later.
+    @ManyToMany
+    @JoinTable(
+            name = "writings_genres",
+            joinColumns = @JoinColumn(name = "writing_id"),
+            inverseJoinColumns = @JoinColumn(name = "genre_id")
+    )
+    private List<Genre> genres;
 }
