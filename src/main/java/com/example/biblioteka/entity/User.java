@@ -19,6 +19,9 @@ public class User {
     @Column(nullable = false, length = 255)
     private String name;
 
+    @Column(nullable = false, name = "is_data_analytics")
+    private Boolean isDataAnalytics =false;
+
     @Column(nullable = false)
     private String password;
 

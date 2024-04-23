@@ -2,6 +2,7 @@ package com.example.biblioteka.web.restcontrollers;
 
 import com.example.biblioteka.dto.LoginDto;
 import com.example.biblioteka.dto.SignupDto;
+import com.example.biblioteka.dto.UserDto;
 import com.example.biblioteka.entity.User;
 import com.example.biblioteka.services.AuthorizationService;
 import com.example.biblioteka.services.UserService;
@@ -25,27 +26,26 @@ public class AuthorizationController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Void> login(@RequestBody LoginDto loginDto) {
+    public ResponseEntity<UserDto> login(@RequestBody LoginDto loginDto) {
         String username = loginDto.getUsername();
         String inputPass = loginDto.getPassword();
         Optional<User> user = authorizationService.checkUser(username, inputPass);
-        return user.isPresent() ? ResponseEntity.ok().build() : ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        return user.map(value -> ResponseEntity.ok().body(new UserDto(value))).orElseGet(
+                () -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
     }
     @PostMapping("/signup")
-    public ResponseEntity<Void> signup(@RequestBody SignupDto signupDto) {
+    public ResponseEntity<UserDto> signup(@RequestBody SignupDto signupDto) {
         if (authorizationService.isUserExist(signupDto.getUsername())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
 
         if (signupDto.getUsername() == null || signupDto.getPassword() == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseEntity.status(400).build();
         }
 
         try {
-            authorizationService.registerNewUser(signupDto);
-            return new ResponseEntity<>(HttpStatus.CREATED);
+            return ResponseEntity.status(HttpStatus.CREATED).body(new UserDto(authorizationService.registerNewUser(signupDto)));
         } catch (Exception e) {
-            // Логування або інша обробка помилок
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

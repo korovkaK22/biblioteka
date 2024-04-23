@@ -24,12 +24,12 @@ public class WritingController {
         return writingService.findAllWritings().stream().map(WritingsDto::new).toList() ;
     }
 
-//    @GetMapping("/{id}")
-//    public ResponseEntity<Writing> getWritingById(@PathVariable Integer id) {
-//        return writingService.findWritingById(id)
-//                .map(ResponseEntity::ok)
-//                .orElse(ResponseEntity.notFound().build());
-//    }
+    @GetMapping("/info/{id}")
+    public ResponseEntity<Writing> getWritingById(@PathVariable Integer id) {
+        return writingService.findWritingById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<String> getPageWritingById(@PathVariable Integer id,

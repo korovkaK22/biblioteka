@@ -35,7 +35,7 @@ public class AuthorizationService {
         return Optional.empty();
     }
 
-    public void registerNewUser(SignupDto signupDto) throws Exception {
+    public User registerNewUser(SignupDto signupDto) throws Exception {
         String password = signupDto.getPassword();
         String hashedPassword = passwordHasher.getHashedPassword(password);
 
@@ -46,7 +46,8 @@ public class AuthorizationService {
 
         System.out.println(passwordHasher.checkPasswords(password, hashedPassword));
 
-        userDAO.save(newUser);
+
+        return userDAO.save(newUser);
     }
 
     public boolean isUserExist(String username) {
