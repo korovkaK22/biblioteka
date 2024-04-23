@@ -25,11 +25,11 @@ public class AuthorizationController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<User> login(@RequestBody LoginDto loginDto) {
+    public ResponseEntity<Void> login(@RequestBody LoginDto loginDto) {
         String username = loginDto.getUsername();
         String inputPass = loginDto.getPassword();
         Optional<User> user = authorizationService.checkUser(username, inputPass);
-        return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
+        return user.isPresent() ? ResponseEntity.ok().build() : ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
     @PostMapping("/signup")
     public ResponseEntity<Void> signup(@RequestBody SignupDto signupDto) {
