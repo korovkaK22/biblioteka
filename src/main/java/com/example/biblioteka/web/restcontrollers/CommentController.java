@@ -1,8 +1,11 @@
 package com.example.biblioteka.web.restcontrollers;
 
+import com.example.biblioteka.dto.CommentCreateDto;
 import com.example.biblioteka.entity.Comment;
 import com.example.biblioteka.services.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,9 +30,16 @@ public class CommentController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping
-    public Comment createComment(@RequestBody Comment comment) {
-        return commentService.saveComment(comment);
+    @PostMapping("/{id}")
+    public ResponseEntity<?> createComment(@PathVariable Integer id,
+            @RequestBody CommentCreateDto comment) {
+        try {
+            return ResponseEntity.ok(commentService.saveComment(comment, id));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage());
+        }
     }
 
     @PutMapping("/{id}")

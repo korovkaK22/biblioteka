@@ -1,6 +1,9 @@
 package com.example.biblioteka.services;
 
+import com.example.biblioteka.dto.CommentCreateDto;
 import com.example.biblioteka.entity.Comment;
+import com.example.biblioteka.entity.User;
+import com.example.biblioteka.entity.Writing;
 import com.example.biblioteka.repository.CommentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,6 +13,10 @@ import java.util.Optional;
 
 @Service
 public class CommentService {
+    @Autowired
+    UserService userService;
+    @Autowired
+    WritingService writingService;
 
     @Autowired
     private CommentRepository commentRepository;
@@ -25,6 +32,26 @@ public class CommentService {
     public Comment saveComment(Comment comment) {
         return commentRepository.save(comment);
     }
+
+
+    public Comment saveComment(CommentCreateDto commentDto, int writingId) throws IllegalArgumentException {
+        Comment comment = new Comment();
+        comment.setComment(commentDto.getComment());
+        comment.setRate(commentDto.getRate());
+        Optional<User> userOpt = userService.findUserByName(commentDto.getUsername());
+        if (userOpt.isEmpty()){
+            throw new IllegalArgumentException("Illegal username");
+        }
+        comment.setUser(userOpt.get());
+        Optional<Writing> writingOpt = writingService.findWritingById(writingId);
+
+        if (writingOpt.isEmpty()){
+            throw new IllegalArgumentException("Illegal writing id");
+        }
+        comment.setWriting(writingOpt.get());
+        return commentRepository.save(comment);
+    }
+
 
     public void deleteComment(Integer id) {
         commentRepository.deleteById(id);

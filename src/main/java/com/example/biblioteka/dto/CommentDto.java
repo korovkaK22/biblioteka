@@ -25,11 +25,9 @@ public class CommentDto {
 
     private Integer id;
 
-
     private UserDto user;
 
     private Integer rate;
-
 
     private String comment;
 

@@ -4,6 +4,7 @@ import com.example.biblioteka.dto.WritingsDto;
 import com.example.biblioteka.entity.Writing;
 import com.example.biblioteka.services.WritingService;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

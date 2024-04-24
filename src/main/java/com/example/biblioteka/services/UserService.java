@@ -26,6 +26,10 @@ public class UserService {
         return userRepository.findById(id);
     }
 
+    public Optional<User> findUserByName(String name) {
+        return userRepository.getUserByNameIgnoreCase(name);
+    }
+
     public User saveUser(User user) {
         String hashedPassword = passwordHasher.getHashedPassword(user.getPassword());
         user.setPassword(hashedPassword);
