@@ -44,7 +44,7 @@ public class UserService {
         return userRepository.findById(id)
                 .map(existingUser -> {
                     existingUser.setName(user.getName());
-                    existingUser.setPassword(user.getPassword());
+                    existingUser.setPassword(passwordHasher.getHashedPassword(user.getPassword()));
                     return userRepository.save(existingUser);
                 })
                 .orElseThrow(() -> new RuntimeException("User not found with id " + id));
