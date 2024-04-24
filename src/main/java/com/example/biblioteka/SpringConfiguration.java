@@ -2,6 +2,7 @@ package com.example.biblioteka;
 
 import com.example.biblioteka.security.PasswordHasher;
 import com.example.biblioteka.security.PasswordHasherImpl;
+import com.example.biblioteka.validators.CommentValidator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -21,6 +22,12 @@ public class SpringConfiguration {
     @Scope("prototype")
     public PasswordHasher getPasswordHasher(){
         return new PasswordHasherImpl();
+    }
+
+    @Bean
+    @Scope("prototype")
+    public CommentValidator getCommentValidator(){
+        return new CommentValidator();
     }
 
 }

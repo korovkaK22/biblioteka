@@ -5,6 +5,7 @@ import com.example.biblioteka.entity.Comment;
 import com.example.biblioteka.entity.User;
 import com.example.biblioteka.entity.Writing;
 import com.example.biblioteka.repository.CommentRepository;
+import com.example.biblioteka.validators.CommentValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,9 @@ import java.util.Optional;
 
 @Service
 public class CommentService {
+    @Autowired
+    CommentValidator commentValidator;
+
     @Autowired
     UserService userService;
     @Autowired
@@ -39,18 +43,17 @@ public class CommentService {
         comment.setComment(commentDto.getComment());
         comment.setRate(commentDto.getRate());
         Optional<User> userOpt = userService.findUserByName(commentDto.getUsername());
-        if (userOpt.isEmpty()){
-            throw new IllegalArgumentException("Illegal username");
-        }
-        comment.setUser(userOpt.get());
         Optional<Writing> writingOpt = writingService.findWritingById(writingId);
 
-        if (writingOpt.isEmpty()){
-            throw new IllegalArgumentException("Illegal writing id");
-        }
+        commentValidator.preValidation(userOpt, writingOpt);
+
+        comment.setUser(userOpt.get());
         comment.setWriting(writingOpt.get());
         return commentRepository.save(comment);
     }
+
+
+
 
 
     public void deleteComment(Integer id) {
