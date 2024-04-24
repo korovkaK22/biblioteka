@@ -3,6 +3,7 @@ package com.example.biblioteka.web.restcontrollers;
 import com.example.biblioteka.dto.WritingsDto;
 import com.example.biblioteka.entity.Writing;
 import com.example.biblioteka.services.WritingService;
+import com.example.biblioteka.validators.WritingValidation;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/writings")
 public class WritingController {
+    @Autowired
+    WritingValidation writingValidation;
 
     @Autowired
     private WritingService writingService;
@@ -33,21 +36,14 @@ public class WritingController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<String> getPageWritingById(@PathVariable Integer id,
+    public ResponseEntity<?> getPageWritingById(@PathVariable Integer id,
                                                      @RequestParam(defaultValue = "1") @Min(1) int page,
                                                      @RequestParam(defaultValue = "2000") @Min(1) int size) {
-        if (page <= 0) {
-            return ResponseEntity.status(400).build();
-        }
-
-        if (writingService.findWritingById(id).isEmpty()) {
-            return ResponseEntity.status(404).build();
-        }
 
         try {
             return ResponseEntity.ok().body(writingService.getPaginatedText(id, page, size));
-        } catch (IndexOutOfBoundsException e) {
-            return ResponseEntity.status(400).build();
+        } catch (IllegalArgumentException | IndexOutOfBoundsException e){
+            return ResponseEntity.status(400).body(e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(500).build();
