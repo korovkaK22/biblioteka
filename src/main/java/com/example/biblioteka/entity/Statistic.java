@@ -17,7 +17,7 @@ public class Statistic {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "id_writings", referencedColumnName = "id")
+    @JoinColumn(name = "writing_id", referencedColumnName = "id")
     private Writing writing;
 
     @Column(nullable = false)

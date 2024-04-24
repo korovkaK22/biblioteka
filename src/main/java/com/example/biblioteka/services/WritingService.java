@@ -109,9 +109,12 @@ public class WritingService {
                 currPage++;
             }
 
+            statisticService.addViewsToWritingStatistic(id);
+
             return currPage;
         }
     }
+
 
 
     public Writing saveWriting(Writing writing) {

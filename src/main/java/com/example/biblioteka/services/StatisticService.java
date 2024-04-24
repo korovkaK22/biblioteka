@@ -1,5 +1,6 @@
 package com.example.biblioteka.services;
 
+import com.example.biblioteka.dto.StatisticDto;
 import com.example.biblioteka.entity.Statistic;
 import com.example.biblioteka.repository.StatisticRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,12 +31,10 @@ public class StatisticService {
         statisticRepository.deleteById(id);
     }
 
-    public Statistic updateStatistic(Integer id, Statistic statistic) {
-        return statisticRepository.findById(id)
-                .map(existingStatistic -> {
-                    existingStatistic.setValue(statistic.getValue());
-                    return statisticRepository.save(existingStatistic);
-                })
-                .orElseThrow(() -> new RuntimeException("Statistic not found with id " + id));
+    public void addViewsToWritingStatistic(int id){
+        Statistic statistic = statisticRepository.findByWritingId(id).get();
+        statistic.setViews(statistic.getViews()+1);
+        statisticRepository.save(statistic);
     }
+
 }

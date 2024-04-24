@@ -32,15 +32,7 @@ public class StatisticController {
         return statisticService.saveStatistic(statistic);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Statistic> updateStatistic(@PathVariable Integer id, @RequestBody Statistic statisticDetails) {
-        try {
-            Statistic updatedStatistic = statisticService.updateStatistic(id, statisticDetails);
-            return ResponseEntity.ok(updatedStatistic);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteStatistic(@PathVariable Integer id) {
